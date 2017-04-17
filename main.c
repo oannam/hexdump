@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "hexdump.h"
 
@@ -33,8 +34,9 @@ int main(int argc, char *argv[])
 	char *output_file = NULL;
 	int err_flag = 0;
 	int line_size = 8;
+	int new_line_size;
 
-	while ((opt = getopt (argc, argv, "o:f:h")) != -1) {
+	while ((opt = getopt (argc, argv, "o:f:l:h")) != -1) {
 		switch (opt) {
 		case 'o':
 			output_file = optarg;
@@ -42,8 +44,15 @@ int main(int argc, char *argv[])
 		case 'f':
 			input_file = optarg;
 			break;
+		case 'l':
+			new_line_size = atoi(optarg);
+			if (hexdump_valid_line_size(new_line_size) == 1)
+				line_size = new_line_size;
+			else
+				printf("Invalid line size %d\n", new_line_size);
+			break;
 		case 'h':
-			printf("Usage:\n main -f input.bin -o output.txt\n");
+			printf("Usage:\n main -f input.bin -o output.txt [-l 16]\n");
 			return 0;
 		}
 	}
