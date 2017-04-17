@@ -3,13 +3,21 @@
 #include <ctype.h>
 #include "hexdump.h"
 
+int hexdump_valid_line_size(int size)
+{
+	if (size != 8 && size != 16)
+		return 0;
+
+	return 1;
+}
+
 int hexdump(char *input, int size, FILE *out, int line_size)
 {
 	int line_no = 0;
 	if (!out)
 		return -1;
 
-	if (line_size != 8 && line_size != 16)
+	if (hexdump_valid_line_size(line_size) == 0)
 		return -1;
 
 	while (size > 0) {
