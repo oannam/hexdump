@@ -5,7 +5,7 @@
 
 #define INPUT_MAX_SIZE 1024
 
-int hexdump_to_file(char *input_file, char *output_file, int line_size)
+int hexdump_to_file(char *input_file, char *output_file, int line_size, int kernel_mode)
 {
 	FILE *in = fopen(input_file, "rb");
 	if (!in)
@@ -19,7 +19,7 @@ int hexdump_to_file(char *input_file, char *output_file, int line_size)
 	}
 
 	FILE *out = fopen(output_file, "wt");
-	hexdump(input_buf, input_size, out, line_size);
+	hexdump(input_buf, input_size, out, line_size, kernel_mode);
 
 	fclose(in);
 	fclose(out);
@@ -35,8 +35,9 @@ int main(int argc, char *argv[])
 	int err_flag = 0;
 	int line_size = 8;
 	int new_line_size;
+	int kernel_mode = 0;
 
-	while ((opt = getopt (argc, argv, "o:f:l:h")) != -1) {
+	while ((opt = getopt (argc, argv, "o:f:l:hk")) != -1) {
 		switch (opt) {
 		case 'o':
 			output_file = optarg;
@@ -51,8 +52,11 @@ int main(int argc, char *argv[])
 			else
 				printf("Invalid line size %d\n", new_line_size);
 			break;
+		case 'k':
+			kernel_mode = 1;
+			break;
 		case 'h':
-			printf("Usage:\n main -f input.bin -o output.txt [-l 16]\n");
+			printf("Usage:\n main -f input.bin -o output.txt [-l 16][-k]\n");
 			return 0;
 		}
 	}
@@ -68,7 +72,7 @@ int main(int argc, char *argv[])
 	if (err_flag != 0)
 		return err_flag;
 
-	hexdump_to_file(input_file, output_file, line_size);
+	hexdump_to_file(input_file, output_file, line_size, kernel_mode);
 
 	return 0;
 }
